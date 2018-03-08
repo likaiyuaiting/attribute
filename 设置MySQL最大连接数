@@ -1,0 +1,13 @@
+    <pre name="code" class="sql">在使用MySQL数据库的时候，经常会遇到这么一个问题，就是“Can not connect to MySQL server. Too many connections”-mysql 1040错误，这是因为访问MySQL且还未释放的连接数目已经达到MySQL的上限。通常，mysql的最大连接数默认是100, 最大可以达到16384。  
+      
+    在Windows下常用的有两种方式修改最大连接数。  
+      
+    第一种：命令行修改。  
+      
+    >mysql -uuser -ppassword(命令行登录MySQL)  
+      
+    mysql>show variables like 'max_connections';(查可以看当前的最大连接数)  
+      
+    msyql>set global max_connections=1000;(设置最大连接数为1000，可以再次查看是否设置成功)  
+      
+    mysql>exit(推出)  
