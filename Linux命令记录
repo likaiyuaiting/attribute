@@ -1,0 +1,102 @@
+1）查询文件夹下文件个数
+
+ls |wc -l
+ls 是查看文件夹内所有文件的命令
+wc -l 是统计文件行数的命令
+以上两个命令叠加，相当于统计文件夹下文件总数
+
+2）本地和服务器拷贝文件
+
+将 文件/文件夹 从远程 Ubuntu 机拷至本地(scp)
+scp -r username@192.168.0.1:/home/username/remotefile.txt .
+将 文件/文件夹 从本地拷至远程 Ubuntu 机(scp)
+scp -r localfile.txt username@192.168.0.1:/home/username/
+
+3）远程登录服务器密码正确，提示再试一次
+
+服务器下修改
+vim /etc/ssh/sshd_config
+找到
+PermitRootLogin prohibit-password
+改为
+PermitRootLogin yes
+重启
+/etc/init.d/ssh restart 
+
+4）ubuntu系统root用户登录没有声音
+
+打开~/.bashrc,添加
+pulseaudio --start --log-target=syslog
+source ~/.bashrc
+
+5）搭建shadowsock
+详看https://teddysun.com/342.html
+
+ssh进入服务器
+wget –-no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh  
+chmod +x shadowsocks.sh  
+./shadowsocks.sh 2>&1 | tee shadowsocks.log  
+
+
+启动：/etc/init.d/shadowsocks start
+停止：/etc/init.d/shadowsocks stop
+重启：/etc/init.d/shadowsocks restart
+状态：/etc/init.d/shadowsocks status
+卸载
+./shadowsocks.sh uninstall
+6）删除0KB文件
+
+find . -name "*.sh" -size 0 -exec rm {} \;
+
+
+7）sh命令换行
+
+./configure --sbin-path=/usr/local/nginx/nginx \
+--conf-path=/usr/local/nginx/nginx.conf \
+--with-openssl=/usr/local/src/openssl-1.0.1c
+
+
+8）linux统计文件行数
+
+语法：wc [选项] 文件…
+该命令各选项含义如下：
+　　- c 统计字节数。
+　　- l 统计行数。
+　　- w 统计字数。
+这些选项可以组合使用。
+例如：
+$ wc - lcw file1 file2
+4 33 file1
+7 52 file2
+11 11 85 total
+
+9）查看端口
+
+netstat -a 查看已经连接的服务端口（ESTABLISHED））
+netstat -ap 查看所有的服务端口（LISTEN，ESTABLISHED）
+netstat -ap | grep 8080 查看指定端口，可以结合grep命令：
+
+
+10) 反向隧道
+
+id_rsa.pud文件互相scp过去，执行
+cat id_rsa.pub >> ~/.ssh/authorized_keys  
+编辑 主机上的 /etc/ssh/sshd_config,去掉以下三行的注释：
+RSAAuthentication yes  
+PubkeyAuthentication yes  
+AuthorizedKeysFile      .ssh/authorized_keys  
+autossh -M 5678-f -NR 6777:localhost:22 user@外网主机A  
+
+
+10) 查看cpu/disk/内存
+
+# 查看物理CPU个数
+cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l
+# 查看每个物理CPU中core的个数(即核数)
+cat /proc/cpuinfo| grep "cpu cores"| uniq
+# 查看逻辑CPU的个数
+cat /proc/cpuinfo| grep "processor"| wc -l
+# 查看硬盘
+df -hl
+# 查看内存
+free -m
