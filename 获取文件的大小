@@ -1,0 +1,11 @@
+void main(){
+    char *read_path = "E:\\test.txt";
+    FILE *fp = fopen(read_path, "r");
+    //重新定位文件指针
+    //SEEK_END文件末尾，0偏移量
+    fseek(fp, 0, SEEK_END);
+    //返回当前的文件指针，相对于文件开头的偏移量
+    long filesize = ftell(fp);
+    printf("%d\n", filesize);
+    getchar();
+}
