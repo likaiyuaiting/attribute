@@ -1,0 +1,18 @@
+void main(){
+    char *read_path = "E:\\test.txt";
+    char *write_path = "E\\text_copy.txt";
+    //读的文件，b字符表示操作二进制文件binary
+    FILE *read_fp = fopen(read_path, "rb");
+    FILE *write_fp = fopen(write_path, "wb");
+    //复制
+    int buff[50];//缓冲区域
+    int len = 0; //每次都到的数据长度
+    while(len = fread(buff, sizeof(int), 50, read_fp) != 0){
+        //将读到的内容写入新的文件
+        fwrite(buff,sizeof(int),len,write_fp);
+    }
+    //关闭流
+    fclose(read_fp);
+    fclose(write_fp);
+    getchar();
+}
