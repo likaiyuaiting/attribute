@@ -1,0 +1,17 @@
+//异或
+//规则：相同为0，不同为1 
+//加密
+void crpypt(char normal_path[], char crypt_path[]){
+    //打开文件
+    FILE *normal_fp = fopen(normal_path, "r");
+    FILE *crypt_fp = fopen(crypt_path, "w");
+    //一次读取一个字符
+    int ch;
+    while((ch = fgetc(normal_fp)) != EOF){//End of File
+    //写入异或运算
+    fputc(ch ^ 9, crypt_fp);
+    }
+    //关闭
+    fclose(crypt_fp);
+    fclose(nromal_fp);
+}
