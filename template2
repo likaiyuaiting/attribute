@@ -1,0 +1,15 @@
+template<typename... Arguments>
+class VariadicTemplate{
+public:
+    void SampleFunction(Arguments... params){
+
+    }
+};
+
+template<>
+class VariadicTemplate<double, int, long>{
+public:
+    void SampleFunction(double param1, int param2, long param3){
+
+    }
+};
