@@ -1,0 +1,15 @@
+template<typename T>
+class Template{
+public:
+    void SampleFunction(T param){
+
+    }
+};
+
+template<>
+class Template<int>{
+public:
+    void SampleFunction(int param){
+
+    }
+};
