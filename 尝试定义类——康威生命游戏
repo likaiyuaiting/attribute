@@ -1,0 +1,205 @@
+#include <iostream>
+using namespace std;
+const int dx[8]={1,1,0,-1,-1,-1,0,1};
+const int dy[8]={0,1,1,1,0,-1,-1,-1};
+const int LIFE_MAX = 3;
+const int LIFE_MIN = 2;
+int c_length,c_width;
+class cell//细胞类
+{
+    private:
+        int x_coor;//坐标x,y
+        int y_coor;
+        bool alive;//是否存活
+        bool need_changed;//是否需要更新
+    public:
+        cell();
+        cell(int x,int y);
+        void grow();
+        void die();
+        void change();//如果周围数量满足条件，打上标记
+        void update();//更新细胞的死活
+        int is_alive();//返回是否存活
+        int count_surrond();//计算周围的数量
+
+};
+cell cell_mass[1000][1000];
+void init(cell cell_mass[1000][1000],int& round,int& length,int& width);
+void do_round();
+void print();//打印
+int count_tot();//计算总存活数
+int main()
+{
+    int round=0,total_round;
+    init(cell_mass,total_round,c_length,c_width);
+    char q;
+    while(round<=total_round)
+    {
+        cin>>q;
+        do_round();
+        print();
+        round++;
+        cout<<"After"<<round<<"Steps,the number of cells alive is "<<count_tot()<<endl;
+        if(count_tot()==0)
+        {
+            round=total_round+1;
+            cout<<"The World Ends."<<endl;
+        }
+    }
+    return 0;
+}
+void cell::grow(void)
+{
+    alive=true;
+}
+void cell::die(void)
+{
+    alive=false;
+}
+int cell::is_alive(void)
+{
+    if(alive)   return 1;
+    else return 0;
+}
+int cell::count_surrond(void)
+{
+    int sum=0;
+    for(int i=0;i<8;i++)
+    {
+        if(x_coor+dx[i]>=0&&x_coor+dx[i]<c_length&&y_coor+dy[i]>=0&&y_coor+dy[i]<c_width)
+        {
+            if(cell_mass[x_coor+dx[i]][y_coor+dy[i]].alive) sum++;
+        }
+    }
+    return sum;
+}
+cell::cell()
+{
+    x_coor=0;
+    y_coor=0;
+    alive=false;
+    need_changed=false;
+}
+cell::cell(int x,int y)
+{
+    x_coor=x;
+    y_coor=y;
+    alive=false;
+    need_changed=false;
+}
+void cell::change()//打"需要更改"标记
+{
+    need_changed=true;
+}
+void cell::update()//更新生死状态
+{
+    if(need_changed==true)
+    {
+        if(alive==false)
+            alive=true;
+        else alive=false;
+        need_changed=false;
+    }
+}
+void init(cell cell_mass[1000][1000],int& round,int& length,int& width)//初始化
+{
+    cout<<"total round ="<<endl;//输入总轮数
+    cin>>round;
+    cout<<"input the length and width"<<endl;
+    cin>>length>>width;//输入游戏区域长宽
+    for(int i=0;i<c_length;i++)
+    {
+        for(int j=0;j<c_width;j++)
+        {
+            cell_mass[i][j]=cell(i,j);//用构造函数的带坐标版本赋值
+        }
+    }
+    int n;
+    cout<<"init alive cells num"<<endl;
+    cin>>n;
+    int x,y;
+    for(int i=1;i<=n;i++)//初始生存细胞
+    {
+        cin>>x>>y;
+        cell_mass[x][y].grow();
+    }
+    print();
+}
+void do_round()//主函数
+{
+    for(int i=0;i<c_length;i++)
+    {
+        for(int j=0;j<c_width;j++)
+        {
+            if(cell_mass[i][j].is_alive())//如果细胞活着，且周围细胞<2或>3
+            {//就打上"需要更改标记"
+                if(cell_mass[i][j].count_surrond()<LIFE_MIN||cell_mass[i][j].count_surrond()>LIFE_MAX)
+                {
+                    cell_mass[i][j].change();
+                }
+            }
+            else
+            {//如果细胞死了，且周围细胞=3，就打上需要更改标记
+                 if(cell_mass[i][j].count_surrond()==LIFE_MAX)
+                {
+                    cell_mass[i][j].change();
+                }
+            }
+        }
+    }
+    /* 但我们不需要立即更新细胞的死活状态
+        因为一旦一边检查每个细胞周围的生存细胞数量，一边就在检查途中对每一个更新的话
+        势必会不满足生命游戏的规则（如果先检查到的细胞改变了生存状态，会影响之后的检查->改变了后检查细胞的周围数量）
+        所以我们在检查时，发现需要更新的细胞，只打上一个“需要更改”标记(need_change)
+        到检查完后再更新所有有need_change=true标记细胞，并把need_change改为false*/
+    for(int i=0;i<c_length;i++)
+    {
+        for(int j=0;j<c_width;j++)
+        {
+            cell_mass[i][j].update();
+        }
+    }
+}
+void print()
+{
+    for(int j=0;j<c_width;j++)
+    {
+        cout<<"_";
+    }
+    cout<<endl;
+    for(int i=0;i<c_length;i++)
+    {
+        for(int j=0;j<c_width;j++)
+        {
+            if(cell_mass[i][j].is_alive())
+            {
+                cout<<"@ ";
+            }
+            else
+            {
+                cout<<". ";
+            }
+        }
+        cout<<endl;
+    }
+    for(int j=0;j<c_width;j++)
+    {
+        cout<<"_";
+    }
+    cout<<endl;
+}
+int count_tot()
+{
+    int tot_alive=0;
+    for(int i=0;i<c_length;i++)
+    {
+        for(int j=0;j<c_width;j++)
+        {
+            if(cell_mass[i][j].is_alive())
+            {
+                tot_alive++;
+            }
+        }
+    }
+    return tot_alive;
+}
