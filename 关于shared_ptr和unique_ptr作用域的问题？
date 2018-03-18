@@ -1,0 +1,24 @@
+#include <cstdio>
+#include <memory>
+
+class Util {
+public:
+	static std::unique_ptr<Util> getUtil() {
+		return std::move(util_uptr);
+	}
+	~Util() {
+		std::puts("delete");
+	}
+private:
+	Util() {};
+	Util(const Util&)=delete;
+	Util& operator=(const Util&)=delete;
+	static std::unique_ptr<Util> util_uptr;
+};
+
+std::unique_ptr<Util> Util::util_uptr{new Util};
+
+作者：暮无井见铃
+链接：https://www.zhihu.com/question/268775617/answer/341542804
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
